@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">storage</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Введите данные</string>
+    <string name="name">Имя: %s</string>
+    <string name="secondName">Фамилия: %s</string>
+    <string name="age">Количество лет: %s</string>
+    <string name="create">создать</string>
+    <string name="delete">удалить</string>
+    <string name="save">сохранить</string>
+    <string name="edit">изменить</string>
+</resources>
