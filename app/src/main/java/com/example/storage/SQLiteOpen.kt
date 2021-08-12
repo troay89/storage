@@ -68,24 +68,24 @@ class SQLiteOpen(context: Context?) : SQLiteOpenHelper(
         return listOfTopics
     }
 
-    fun savePerson(name: String, secondName: String, age: String){
+    fun savePerson(person: Person){
         val values = ContentValues()
-        values.put(FIRST_COLUMN, name)
-        values.put(SECOND_COLUMN, secondName)
-        values.put(THIRD_COLUMN, age)
+        values.put(FIRST_COLUMN, person.firstName)
+        values.put(SECOND_COLUMN, person.secondName)
+        values.put(THIRD_COLUMN, person.age)
         writableDatabase.insert(TABLE_NAME,null, values)
     }
 
-    override fun delete(id: Int) {
+    override fun delete(id: Int?) {
         writableDatabase.delete(TABLE_NAME, "_id = $id", null)
     }
 
-    override fun edit(id: Int?, name: String?, secondName: String?, age: String?) {
+    override fun edit(person: Person) {
         val updatedValues = ContentValues()
-        updatedValues.put(FIRST_COLUMN, name)
-        updatedValues.put(SECOND_COLUMN, secondName)
-        updatedValues.put(THIRD_COLUMN, age)
-        val where = "_id = $id"
+        updatedValues.put(FIRST_COLUMN, person.firstName)
+        updatedValues.put(SECOND_COLUMN, person.secondName)
+        updatedValues.put(THIRD_COLUMN, person.age)
+        val where = "_id = ${person.id}"
         writableDatabase.update(TABLE_NAME, updatedValues, where, null)
     }
 }

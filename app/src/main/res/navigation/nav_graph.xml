@@ -19,20 +19,13 @@
         android:name="com.example.storage.EditAndAddPerson"
         android:label="редактирования"
         tools:layout="@layout/fragment_edit_and_add_person">
-        <argument
-            android:name="ID"
-            app:argType="string" />
-        <argument
-            android:name="FIRST_NAME"
-            app:argType="string" />
-        <argument
-            android:name="SECOND_NAME"
-            app:argType="string" />
-        <argument
-            android:name="AGE"
-            app:argType="string" />
+
         <action
             android:id="@+id/action_editAndAddPerson_to_blankFragment"
             app:destination="@id/blankFragment" />
+        <argument
+            android:name="person"
+            app:argType="com.example.storage.Person"
+            app:nullable="true" />
     </fragment>
 </navigation>

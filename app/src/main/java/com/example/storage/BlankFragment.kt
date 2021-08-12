@@ -55,7 +55,7 @@ class BlankFragment : Fragment() {
 
         binding.create.setOnClickListener {
             val action =
-                BlankFragmentDirections.actionBlankFragmentToEditAndAddPerson("", "", "", "")
+                BlankFragmentDirections.actionBlankFragmentToEditAndAddPerson(null)
             view.findNavController().navigate(action)
         }
     }
@@ -87,12 +87,7 @@ class BlankFragment : Fragment() {
             }
 
             holder.edit.setOnClickListener {
-                val action = BlankFragmentDirections.actionBlankFragmentToEditAndAddPerson(
-                    item.id.toString(),
-                    item.firstName,
-                    item.secondName,
-                    item.age
-                )
+                val action = BlankFragmentDirections.actionBlankFragmentToEditAndAddPerson(item)
                 holder.view.findNavController().navigate(action)
             }
         }

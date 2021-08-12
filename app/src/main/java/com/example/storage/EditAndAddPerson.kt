@@ -7,9 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.storage.databinding.FragmentEditAndAddPersonBinding
 
 
@@ -18,6 +17,7 @@ class EditAndAddPerson : Fragment() {
     private var _binding: FragmentEditAndAddPersonBinding? = null
     private val binding get() = _binding!!
     private var database: SQLiteOpen? = null
+    private val args by navArgs<EditAndAddPersonArgs>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,16 +29,13 @@ class EditAndAddPerson : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        database = SQLiteOpen(context)
 
-        val _id:String = arguments?.getString(ID)!!
-        var id: Int? = null
-        if (_id.isNotBlank()){
-            id = _id.toInt()
-        }
-        val oldName = SpannableStringBuilder(arguments?.getString(FIRST_NAME) ?: "")
-        val oldSecondName = SpannableStringBuilder(arguments?.getString(SECOND_NAME) ?: "")
-        val oldAge = SpannableStringBuilder(arguments?.getString(AGE) ?: "")
+        database = SQLiteOpen(context)
+        val person = args.person
+
+        val oldName = SpannableStringBuilder(person?.firstName ?: "")
+        val oldSecondName = SpannableStringBuilder(person?.secondName ?: "")
+        val oldAge = SpannableStringBuilder(person?.age ?: "")
 
 
         binding.editName.text = oldName
@@ -50,10 +47,12 @@ class EditAndAddPerson : Fragment() {
             val secondName = binding.editSecondName.text.toString()
             val age = binding.age.text.toString()
 
-            if (oldName.isBlank() && oldSecondName.isBlank() && oldAge.isBlank()) {
-                database?.savePerson(name, secondName, age)
+            if (person == null) {
+                val newPerson = Person(null, name, secondName, age)
+                database?.savePerson(newPerson)
             } else {
-                database?.edit(id, name, secondName, age)
+                val editPerson = Person(person.id, name, secondName, age)
+                database?.edit(editPerson)
             }
         }
 
@@ -66,12 +65,5 @@ class EditAndAddPerson : Fragment() {
             back()
             findNavController().navigate(R.id.action_editAndAddPerson_to_blankFragment)
         }
-    }
-
-    companion object {
-        private const val ID = "ID"
-        private const val FIRST_NAME = "FIRST_NAME"
-        private const val SECOND_NAME = "SECOND_NAME"
-        private const val AGE = "AGE"
     }
 }
