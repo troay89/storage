@@ -5,20 +5,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.storage.databinding.FragmentBlankBinding
-import com.example.storage.databinding.ItemPersonBinding
 
 
-class BlankFragment: Fragment() {
+class BlankFragment : Fragment() {
 
-    interface SavesCallBack {
-        fun newPerson(id: Int?, name: String?, secondName: String?, age: String?)
-    }
 
     private var _binding: FragmentBlankBinding? = null
     private val binding get() = _binding!!
@@ -27,11 +26,10 @@ class BlankFragment: Fragment() {
     private var database: SQLiteOpen? = null
 
     private var listener: ButtonListener? = null
-    private var callback: SavesCallBack? = null
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = context as SavesCallBack
         listener = SQLiteOpen(context)
     }
 
@@ -40,23 +38,25 @@ class BlankFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentBlankBinding.inflate(inflater, container, false)
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
-
-        binding.recyclerView.adapter = adapter
-
-        val dividerItemDecoration = DividerItemDecoration(context, RecyclerView.VERTICAL)
-        dividerItemDecoration.setDrawable(resources.getDrawable(R.drawable.divider_drawable))
-        binding.recyclerView.addItemDecoration(dividerItemDecoration)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+        binding.recyclerView.adapter = adapter
+
+        val dividerItemDecoration = DividerItemDecoration(context, RecyclerView.VERTICAL)
+        dividerItemDecoration.setDrawable(resources.getDrawable(R.drawable.divider_drawable))
+        binding.recyclerView.addItemDecoration(dividerItemDecoration)
         database = SQLiteOpen(context)
         adapter.submitList(database?.getListOfTopics())
+
         binding.create.setOnClickListener {
-            callback?.newPerson(null, null, null, null)
+            val action =
+                BlankFragmentDirections.actionBlankFragmentToEditAndAddPerson("", "", "", "")
+            view.findNavController().navigate(action)
         }
     }
 
@@ -65,40 +65,47 @@ class BlankFragment: Fragment() {
         _binding = null
     }
 
-    override fun onDestroy() {
-        callback = null
-        super.onDestroy()
-    }
-
     private inner class AdapterPerson : ListAdapter<Person, ViewHolderPerson>(Person.DiffCallback) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderPerson {
-            val layoutInflater = LayoutInflater.from(parent.context)
-            val view = ItemPersonBinding.inflate(layoutInflater, parent, false)
-            return ViewHolderPerson(view)
+            val layout = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_person, parent, false)
+            return ViewHolderPerson(layout)
         }
 
         override fun onBindViewHolder(holder: ViewHolderPerson, position: Int) {
-            holder.bind(getItem(position))
-        }
 
-    }
+            val item = getItem(position)
 
-    private inner class ViewHolderPerson(val view: ItemPersonBinding) :
-        RecyclerView.ViewHolder(view.root) {
+            holder.firstNameText.text = getString(R.string.name, item.firstName)
+            holder.secondNameText.text = getString(R.string.name, item.secondName)
+            holder.ageText.text = getString(R.string.name, item.age)
 
-        fun bind(person: Person) {
-            view.firstName.text = getString(R.string.name, person.firstName)
-            view.secondName.text = getString(R.string.secondName, person.secondName)
-            view.age.text = getString(R.string.age, person.age)
-            view.delete.setOnClickListener {
-                listener?.delete(person.id)
+            holder.deleteButton.setOnClickListener {
+                listener?.delete(item.id)
                 adapter.submitList(database?.getListOfTopics())
             }
-            view.edit.setOnClickListener {
-                callback?.newPerson(person.id, person.firstName, person.secondName, person.age)
+
+            holder.edit.setOnClickListener {
+                val action = BlankFragmentDirections.actionBlankFragmentToEditAndAddPerson(
+                    item.id.toString(),
+                    item.firstName,
+                    item.secondName,
+                    item.age
+                )
+                holder.view.findNavController().navigate(action)
             }
         }
+    }
+
+    private inner class ViewHolderPerson(val view: View) :
+        RecyclerView.ViewHolder(view) {
+
+        val firstNameText: TextView = view.findViewById(R.id.first_name)
+        val secondNameText: TextView = view.findViewById(R.id.second_name)
+        val ageText: TextView = view.findViewById(R.id.age)
+        val deleteButton: ImageButton = view.findViewById(R.id.delete)
+        val edit: ImageButton = view.findViewById(R.id.edit)
     }
 }
 

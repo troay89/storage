@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/blankFragment">
+
+    <fragment
+        android:id="@+id/blankFragment"
+        android:name="com.example.storage.BlankFragment"
+        android:label="список"
+        tools:layout="@layout/fragment_blank">
+        <action
+            android:id="@+id/action_blankFragment_to_editAndAddPerson"
+            app:destination="@id/editAndAddPerson" />
+    </fragment>
+    <fragment
+        android:id="@+id/editAndAddPerson"
+        android:name="com.example.storage.EditAndAddPerson"
+        android:label="редактирования"
+        tools:layout="@layout/fragment_edit_and_add_person">
+        <argument
+            android:name="ID"
+            app:argType="string" />
+        <argument
+            android:name="FIRST_NAME"
+            app:argType="string" />
+        <argument
+            android:name="SECOND_NAME"
+            app:argType="string" />
+        <argument
+            android:name="AGE"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_editAndAddPerson_to_blankFragment"
+            app:destination="@id/blankFragment" />
+    </fragment>
+</navigation>

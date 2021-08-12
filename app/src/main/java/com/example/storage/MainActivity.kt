@@ -2,23 +2,30 @@ package com.example.storage
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.storage.databinding.ActivityMainBinding
 
-private lateinit var binding: ActivityMainBinding
+class MainActivity : AppCompatActivity() {
 
-class MainActivity : AppCompatActivity(), BlankFragment.SavesCallBack, EditAndAddPerson.BlankCallBack {
+    private lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+
+        val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportFragmentManager.beginTransaction().replace(R.id.container, BlankFragment()).commit()
+
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
+
+        navController = navHostFragment.navController
+
+        setupActionBarWithNavController(navController)
     }
 
-    override fun newPerson(id: Int?, name: String?, secondName: String?, age: String?) {
-        supportFragmentManager.beginTransaction().replace(R.id.container, EditAndAddPerson.newInstance(id, name, secondName, age)).commit()
-    }
-
-    override fun result() {
-        supportFragmentManager.beginTransaction().replace(R.id.container, BlankFragment()).commit()
-    }
+//    override fun onSupportNavigateUp(): Boolean {
+//        return navController.navigateUp() || super.onSupportNavigateUp()
+//    }
 }
